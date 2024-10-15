@@ -1,0 +1,10 @@
+[
+    {
+        "name": "SUPERADMIN",
+        "description": "super admin with all permissions"
+    },
+    {
+        "name": "ADMIN",
+        "description": "admin have all permission on their company and stores"
+    }
+]

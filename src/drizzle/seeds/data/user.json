@@ -1,0 +1,13 @@
+[
+    {
+        "firstName": "Vellai",
+        "lastName": "Ameer",
+        "email": "ameer@test.com",
+        "phone": "8900982340",
+        "password": "123456",
+        "roleId": 1,
+        "isEmailVerified": true,
+        "isPhoneVerified": true,
+        "accountStatus": true
+    }
+]

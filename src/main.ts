@@ -24,7 +24,7 @@ async function bootstrap() {
   // app global interceptor for tranforming response
   app.useGlobalInterceptors(new CustomResponseObjectInterceptor())
 
-  await app.listen(9000);
-  console.log('server is running on PORT 9000')
+  await app.listen(8068);
+  console.log('server is running on PORT 8068')
 }
 bootstrap();

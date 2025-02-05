@@ -1,5 +1,5 @@
 import { db } from "../db";
-import * as bcrypt from 'bcrypt';
+import * as argon2 from 'argon2';
 import user from './data/user.json';
 import * as schema from 'src/drizzle/schema';
 
@@ -8,7 +8,7 @@ export const userSeed = async (dbInstance: typeof db) => {
         // Loop through each user in the user.json file
         for (const u of user) {
             // Hash the user's password before seeding
-            const hashedPassword = await bcrypt.hash(u.password, 10);
+            const hashedPassword = await argon2.hash(u.password);
 
             const payload = {
                 firstName: u.firstName,

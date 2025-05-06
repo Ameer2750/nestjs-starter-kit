@@ -2,7 +2,7 @@ services:
   backend:
     build: 
       context: .
-    container_name: nivam-backend
+    container_name: focus_diagnostic_backend
     ports:
       - 8068:8068
     volumes:
@@ -19,7 +19,7 @@ services:
       - db  # ✅ Add backend to the same network
 
   db:
-    container_name: postgres
+    container_name: postgres_focus
     image: postgres
     restart: unless-stopped
     env_file:
@@ -31,7 +31,7 @@ services:
     networks:
       - db
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U root -d nivam" ]
+      test: [ "CMD-SHELL", "pg_isready -U root -d focus" ]
       interval: 10s
       timeout: 5s
       retries: 5

@@ -29,13 +29,15 @@ export class AuthService {
     public async validateUserForLocalStrategy(email: string, password: string) {
         try {
             const user = await this.userService.findOneByEmailOrPhone({ email });
-            const isMatch = await this.cryptoService.compareHash(password, user.user.password);
+            const isMatch = await this.cryptoService.verifyArgonHash(user.user.password, password);
+            console.log('user.user && isMatch: ', user.user && isMatch);
 
             if (user.user && isMatch) {
-                return user.user;
+                return user.user;   
             }
             return null;
         } catch (error) {
+            console.log('error: ', error);
             throw new InternalServerErrorException(error);
         }
     }
@@ -51,7 +53,7 @@ export class AuthService {
         })
 
         const hashedRefreshToken = await this.cryptoService.generateArgonHash(refreshToken);
-        await this.userService.updateRefreshToken(id, hashedRefreshToken)
+        const val =  await this.userService.updateRefreshToken(id, hashedRefreshToken)
 
         return {
             accessToken,
@@ -75,6 +77,7 @@ export class AuthService {
     }
 
     public async login(user: any) {
+        console.log('user: ', user);
         try {
             const { accessToken, refreshToken } = await this.generateTokens(user.id)
 

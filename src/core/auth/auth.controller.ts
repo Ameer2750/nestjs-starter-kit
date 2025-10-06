@@ -1,4 +1,4 @@
-import { Body, Controller, Get, InternalServerErrorException, Post, Request, UseGuards } from "@nestjs/common";
+import { Body, Controller, Get, Post, Request, UseGuards } from "@nestjs/common";
 import { Public } from "src/common/decorators/public.decorator";
 import { LocalAuthGuard } from "./guards/local-auth.guard";
 import { AuthService } from "./auth.service";
@@ -20,14 +20,15 @@ export class AuthController {
     @Public()
     @Post('signup')
     public async signup(@Body() signupDto: SignupDto) {
-        return ;
+        return await this.authService.signup(signupDto);
     }
 
     @Public()
     @UseGuards(LocalAuthGuard)
     @Post('login')
     public async login(@Request() req: any) {
-        return this.authService.login(req.user);
+        const data = await this.authService.login(req.user);
+        return data
     }
 
     @Public()

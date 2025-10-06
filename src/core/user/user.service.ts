@@ -41,6 +41,7 @@ export class UserService {
 
 
     public async findOneByEmailOrPhone(findOneByMailOrPhoneType: FindOneByMailOrPhoneType) {
+        console.log('findOneByMailOrPhoneType: ', findOneByMailOrPhoneType);
         try {
             const { email, phone } = findOneByMailOrPhoneType;
 
@@ -105,6 +106,7 @@ export class UserService {
 
 
     public async findOneById(id: number) {
+        console.log('id: ', id);
         try {
             if (!id) {
                 throw new BadRequestException(`Please Provide Valid Id`)
@@ -114,6 +116,7 @@ export class UserService {
                 .select()
                 .from(schema.userTable)
                 .where(eq(schema.userTable.id, id))
+            console.log('user: ', user);
 
             if (!user) {
                 throw new NotFoundException(`User Not Found`)
@@ -199,15 +202,18 @@ export class UserService {
                 throw new BadRequestException('Invalid phone number format.');
             }
 
+            let hashedPassword = await this.cryptoService.generateArgonHash(password)
+
             const payload = {
                 firstName,
                 lastName,
                 email,
                 phone,
-                password,
+                password: hashedPassword,
                 roleId,
                 hashedRefreshToken
             }
+            
 
             const [insertUser] = await this.drizzle
                 .insert(schema.userTable)
@@ -358,10 +364,12 @@ export class UserService {
             await this.drizzle
                 .update(schema.userTable)
                 .set(payload)
+                .where(eq(schema.userTable.id, id))
 
             return 'hashed refresh token updated successfully'
 
         } catch (error) {
+            console.log('error: ', error);
             throw new InternalServerErrorException(error)
         }
     }

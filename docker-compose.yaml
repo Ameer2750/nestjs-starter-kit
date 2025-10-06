@@ -2,9 +2,9 @@ services:
   backend:
     build: 
       context: .
-    container_name: focus_diagnostic_backend
+    container_name: nestjs_backend
     ports:
-      - 8068:8068
+      - 8090:8090
     volumes:
       - .:/app
       - /app/node_modules
@@ -19,7 +19,7 @@ services:
       - db  # ✅ Add backend to the same network
 
   db:
-    container_name: postgres_focus
+    container_name: postgres
     image: postgres
     restart: unless-stopped
     env_file:
@@ -27,14 +27,30 @@ services:
     volumes:
       - db:/var/lib/postgresql/data
     ports:
-      - "5332:5432"
+      - "5321:5432"
     networks:
       - db
     healthcheck:
-      test: [ "CMD-SHELL", "pg_isready -U root -d focus" ]
+      test: [ "CMD-SHELL", "pg_isready -U root -d ats" ]
       interval: 10s
       timeout: 5s
       retries: 5
+
+  pgadmin:
+    container_name: pgadmin
+    image: dpage/pgadmin4
+    restart: unless-stopped
+    env_file:
+      - .env
+    ports:
+      - "4050:80"   # Access pgAdmin in browser at http://localhost:8080
+    networks:
+      - db
+    depends_on:
+      - db
+    volumes:
+      - pgadmin_data:/var/lib/pgadmin
+
 
 networks:
   db:
@@ -42,3 +58,4 @@ networks:
 
 volumes:
   db:
+  pgadmin_data:

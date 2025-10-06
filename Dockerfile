@@ -1,4 +1,4 @@
-FROM node:18-alpine
+FROM node:22-alpine3.21
 
 WORKDIR /app
 
@@ -8,6 +8,6 @@ RUN npm i -g pnpm && pnpm install
 
 COPY . .
 
-EXPOSE 8068
+EXPOSE 8090
 
 CMD [ "pnpm", "run", "start:dev" ]

@@ -3,6 +3,7 @@ import { AppModule } from 'src/app.module';
 import { ValidationPipe } from '@nestjs/common';
 import { CustomResponseObjectInterceptor } from 'src/common/interceptors/custom-response-interceptor';
 import { WafInterceptor } from './common/interceptors/waf-interceptor';
+import { UserAgentBlocker } from './common/middlewares/user-agent-blocker';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -25,6 +26,8 @@ async function bootstrap() {
   // app global interceptor for tranforming response
   app.useGlobalInterceptors(new CustomResponseObjectInterceptor())
   app.useGlobalInterceptors(new WafInterceptor())
+
+  app.use(UserAgentBlocker);
 
   await app.listen(8068);
   console.log('server is running on PORT 8068')

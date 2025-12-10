@@ -8,7 +8,7 @@ import { APP_GUARD } from '@nestjs/core';
 import { JwtAuthGuard } from './core/auth/guards/jwt-auth.guard';
 import { RoleGuard } from './common/guards/roles.guard';
 import { RolePermissionModule } from './core/role-permission/role-permission.module';
-
+import { ThrottlerModule } from '@nestjs/throttler';
 
 @Module({
   imports: [
@@ -26,6 +26,14 @@ import { RolePermissionModule } from './core/role-permission/role-permission.mod
           migrationOptions: { migrationsFolder: './src/drizzle/migrations' },
         };
       },
+    }),
+    ThrottlerModule.forRoot({
+      throttlers: [
+        {
+          limit: 20,
+          ttl: 10
+        }
+      ]
     }),
     CoreModule,
     RolePermissionModule,

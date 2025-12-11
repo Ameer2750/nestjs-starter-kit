@@ -6,6 +6,7 @@ import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { UserService } from '../../user/user.service';
 import { ConfigService } from '@nestjs/config';
 import { EnvironmentVariables } from '../../../config/env/configuration';
+import { Request } from 'express';
 
 type UserTable = InferSelectModel<typeof userTable>
 
@@ -18,14 +19,21 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     configService: ConfigService<EnvironmentVariables>,
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req: Request) => {
+          const token = req.cookies?.accessToken;
+          return token;
+        }
+      ]),
       ignoreExpiration: false,
       secretOrKey: configService.get('jwtSecret'),
+      passReqToCallback: true,
     });
     this.userService = userService;
   }
 
-  async validate(payload: any): Promise<UserTable | null> {
+  async validate(req: Request, payload: any): Promise<UserTable | null> {
+    
     const authUser = await this.userService.findOneById(payload.sub);
     if (!authUser) {
       throw new UnauthorizedException();

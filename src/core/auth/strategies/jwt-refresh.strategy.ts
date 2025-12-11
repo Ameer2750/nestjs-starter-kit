@@ -22,17 +22,22 @@ export class JwtRefreshStrategy extends PassportStrategy(Strategy, 'jwt-refresh'
     authService: AuthService
   ) {
     super({
-      jwtFromRequest: ExtractJwt.fromAuthHeaderAsBearerToken(),
+      jwtFromRequest: ExtractJwt.fromExtractors([
+        (req: Request) => {
+          const token = req.cookies?.refreshToken;
+          return token;
+        }
+      ]),
       ignoreExpiration: false,
       secretOrKey: configService.get('jwtRefreshSecret'),
       passReqToCallback: true,
     });
     this.userService = userService;
-    this.authService =authService
+    this.authService = authService
   }
 
-  validate(req: Request, payload: {sub: number}) {
-    const refreshToken = req.get('authorization').replace('Bearer', '').trim();
+  validate(req: Request, payload: { sub: number }) {
+    const refreshToken = req.cookies['refreshToken'];
     const userId = payload.sub;
     return this.authService.validateRefreshToken(userId, refreshToken);
   }
